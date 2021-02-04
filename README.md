@@ -1,4 +1,4 @@
-# GitHub Workflow Generator
+# Manorrock Parrot - a GitHub Workflow Generator
 
 ## Cron
 
