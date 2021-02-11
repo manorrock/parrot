@@ -1,4 +1,4 @@
-package gwg;
+package com.manorrock.parrot;
 
 import com.manorrock.yaml.YAMLLiteralBlock;
 import com.manorrock.yaml.YAMLWriter;
@@ -9,12 +9,12 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
-import gwg.model.Cron;
-import gwg.model.Job;
-import gwg.model.On;
-import gwg.model.Push;
-import gwg.model.Workflow;
-import gwg.model.WorkflowDispatch;
+import com.manorrock.parrot.model.Cron;
+import com.manorrock.parrot.model.Job;
+import com.manorrock.parrot.model.On;
+import com.manorrock.parrot.model.Push;
+import com.manorrock.parrot.model.Workflow;
+import com.manorrock.parrot.model.WorkflowDispatch;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class Gwg {
+public class Parrot {
 
     /**
      * Stores the base directory.
@@ -51,7 +51,7 @@ public class Gwg {
      * @param arguments the command line arguments.
      */
     public static void main(String[] arguments) {
-        Gwg gwg = new Gwg();
+        Parrot gwg = new Parrot();
         gwg.parseArguments(arguments);
         gwg.run();
     }
@@ -106,7 +106,7 @@ public class Gwg {
      */
     private void processFile(File file) {
         System.out.println("--- Processing file: " + file);
-        GwgContext context = new GwgContext();
+        ParrotContext context = new ParrotContext();
         context.setCurrentFile(file);
         context.getSnippets().addAll(loadFile(file));
         context.setOutputFilename(getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".yml");
@@ -174,7 +174,7 @@ public class Gwg {
      * @param context the context.
      * @return the GitHub workflow.
      */
-    private Workflow generateWorkflow(GwgContext context) {
+    private Workflow generateWorkflow(ParrotContext context) {
         System.out.println("--- Generating GitHub workflow");
         Workflow workflow = new Workflow();
         workflow.setName(getRelativeFilename(context.getCurrentFile()));
@@ -227,7 +227,7 @@ public class Gwg {
      * @param context the context.
      * @param comment the HTML comment block.
      */
-    private void processCommentSnippet(GwgContext context, HtmlCommentBlock comment) {
+    private void processCommentSnippet(ParrotContext context, HtmlCommentBlock comment) {
         String firstLine = comment.getContentChars(0, 1).toString();
         if (firstLine.endsWith("\n")) {
             firstLine = firstLine.substring(0, firstLine.length() - 1);
@@ -270,7 +270,7 @@ public class Gwg {
      * @param context the context.
      * @param cron the cron schedule.
      */
-    private void processCronDirective(GwgContext context, String cron) {
+    private void processCronDirective(ParrotContext context, String cron) {
         if (context.getSnippetStack().isEmpty()) {
             On on = context.getWorkflow().getOn();
             if (on.getSchedule() == null) {
@@ -292,7 +292,7 @@ public class Gwg {
      * @param context the context.
      * @param comment the HtmlCommentBlock.
      */
-    private void processDirectOnlySnippet(GwgContext context, HtmlCommentBlock comment) {
+    private void processDirectOnlySnippet(ParrotContext context, HtmlCommentBlock comment) {
         if (context.getSnippetStack().isEmpty()) {
             List<BasedSequence> content = comment.getContentLines();
             content.remove(0);
@@ -311,7 +311,7 @@ public class Gwg {
      * @param context the context.
      * @param code the fenced code block.
      */
-    private void processFencedCodeBlock(GwgContext context, FencedCodeBlock code) {
+    private void processFencedCodeBlock(ParrotContext context, FencedCodeBlock code) {
         context.getScriptBuilder().append(code.getContentChars().toString().trim());
         context.getScriptBuilder().append("\n");
     }
@@ -331,7 +331,7 @@ public class Gwg {
      * @param context the context.
      * @param includeFilename the include filename.
      */
-    private void processIncludeSnippet(GwgContext context, String includeFilename) {
+    private void processIncludeSnippet(ParrotContext context, String includeFilename) {
         context.getSnippetStack().push(context.getSnippets());
         File includeFile = new File(context.getCurrentFile().getParent(), includeFilename);
         List snippets = loadFile(includeFile);
@@ -345,7 +345,7 @@ public class Gwg {
      * @param context the context.
      * @param outputFilename the output filename.
      */
-    private void processOutputFilename(GwgContext context, String outputFilename) {
+    private void processOutputFilename(ParrotContext context, String outputFilename) {
         if (context.getSnippetStack().isEmpty()) {
             context.setOutputFilename(outputFilename);
         }
@@ -361,7 +361,7 @@ public class Gwg {
      *
      * @param pushPathFlag the push path flag.
      */
-    private void processPushPath(GwgContext context, String pushPathFlag) {
+    private void processPushPath(ParrotContext context, String pushPathFlag) {
         if (context.getSnippetStack().isEmpty()) {
             Boolean booleanValue = Boolean.parseBoolean(pushPathFlag);
             if (booleanValue) {
@@ -391,7 +391,7 @@ public class Gwg {
      * @param context the context.
      * @param comment the comment.
      */
-    private void processRunSnippet(GwgContext context, HtmlCommentBlock comment) {
+    private void processRunSnippet(ParrotContext context, HtmlCommentBlock comment) {
         List<BasedSequence> content = comment.getContentLines();
         content.remove(0);
         content.remove(content.size() - 1);
@@ -412,7 +412,7 @@ public class Gwg {
      * @param context the context.
      * @param runsOn the runs-on.
      */
-    private void processRunsOn(GwgContext context, String runsOn) {
+    private void processRunsOn(ParrotContext context, String runsOn) {
         if (context.getSnippetStack().isEmpty()) {
             Job job = (Job) context.getWorkflow().getJobs().get("validate");
             job.setRunsOn(runsOn);
@@ -428,7 +428,7 @@ public class Gwg {
      *
      * @param context the context.
      */
-    private void processSkip(GwgContext context) {
+    private void processSkip(ParrotContext context) {
         if (context.getSnippets().size() > 0) {
             context.getSnippets().remove(0);
         }
@@ -439,7 +439,7 @@ public class Gwg {
      *
      * @param context the context.
      */
-    private void processSnippet(GwgContext context) {
+    private void processSnippet(ParrotContext context) {
         Object snippet = context.getSnippets().remove(0);
         if (snippet instanceof FencedCodeBlock) {
             FencedCodeBlock code = (FencedCodeBlock) snippet;
@@ -462,7 +462,7 @@ public class Gwg {
      *
      * @param context the context.
      */
-    private void processWorkflowDispatchDirective(GwgContext context) {
+    private void processWorkflowDispatchDirective(ParrotContext context) {
         if (context.getSnippetStack().isEmpty()) {
             On on = context.getWorkflow().getOn();
             if (on.getWorkflow_dispatch() == null) {
@@ -481,7 +481,7 @@ public class Gwg {
      * @param context the context.
      * @param name the workflow name.
      */
-    private void processWorkflowName(GwgContext context, String name) {
+    private void processWorkflowName(ParrotContext context, String name) {
         if (context.getSnippetStack().isEmpty()) {
             context.getWorkflow().setName(name);
         }

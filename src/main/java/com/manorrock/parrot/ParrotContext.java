@@ -1,6 +1,6 @@
-package gwg;
+package com.manorrock.parrot;
 
-import gwg.model.Workflow;
+import com.manorrock.parrot.model.Workflow;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Stack;
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class GwgContext {
+public class ParrotContext {
 
     /**
      * Stores the file stack.
@@ -46,7 +46,7 @@ public class GwgContext {
     /**
      * Constructor.
      */
-    public GwgContext() {
+    public ParrotContext() {
         this.fileStack = new Stack();
         this.snippets = new ArrayList();
         this.snippetStack = new Stack();

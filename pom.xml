@@ -23,7 +23,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>gwg.Gwg</mainClass>
+                            <mainClass>com.manorrock.parrot.Parrot</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

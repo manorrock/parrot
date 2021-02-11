@@ -1,4 +1,4 @@
-package gwg.model;
+package com.manorrock.parrot.model;
 
 import com.manorrock.yaml.YAMLSerializerHint;
 import java.util.ArrayList;

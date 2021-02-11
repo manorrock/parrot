@@ -1,4 +1,4 @@
-package gwg.model;
+package com.manorrock.parrot.model;
 
 /**
  * A GitHub cron schedule.
