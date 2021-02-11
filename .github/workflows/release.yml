@@ -18,7 +18,7 @@ jobs:
         server-password: MAVEN_PASSWORD
     - name: Build with Maven
       run: |
-        mvn -B -DskipTests=true -DskipITs=true deploy
+        mvn --no-transfer-progress -B -DskipTests=true -DskipITs=true -P release deploy
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
