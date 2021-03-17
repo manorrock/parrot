@@ -165,7 +165,7 @@ public class Parrot {
      * @param file the file to include.
      */
     private List loadFile(File file) {
-        System.out.println("--- Loading file - " + file);
+        System.out.println("--- Loading file - " + file.toPath().normalize());
         ArrayList<Node> nodes = new ArrayList<>();
         try {
             MutableDataSet options = new MutableDataSet();
@@ -176,13 +176,11 @@ public class Parrot {
                 Node node = iterator.next();
                 if (node instanceof HtmlCommentBlock) {
                     HtmlCommentBlock comment = (HtmlCommentBlock) node;
-                    System.out.println(comment.getChars().toString());
                     nodes.add(comment);
                 }
                 if (node instanceof FencedCodeBlock) {
                     FencedCodeBlock code = (FencedCodeBlock) node;
                     if (code.getInfo().toString().equals("shell")) {
-                        System.out.println(code.getChars().toString());
                         nodes.add(code);
                     }
                 }
@@ -228,6 +226,8 @@ public class Parrot {
             processSnippet(context);
             if (context.getSnippets().isEmpty() && !context.getSnippetStack().isEmpty()) {
                 context.setSnippets((ArrayList) context.getSnippetStack().pop());
+                File processedFile = (File) context.getFileStack().peek();
+                System.out.println("End processing - " + processedFile.toPath().normalize());
                 context.getFileStack().pop();
             }
         }
@@ -271,6 +271,8 @@ public class Parrot {
                 processOutputFilename(context, matcher.group(2));
             } else if (action.equals("include")) {
                 processIncludeSnippet(context, matcher.group(2));
+            } else if (action.equals("includeOnce")) {
+                processIncludeOnceSnippet(context, matcher.group(2));
             } else if (action.equals("name")) {
                 processWorkflowName(context, matcher.group(2));
             } else if (action.equals("pushPath")) {
@@ -359,9 +361,46 @@ public class Parrot {
     private void processIncludeSnippet(ParrotContext context, String includeFilename) {
         context.getSnippetStack().push(context.getSnippets());
         File includeFile = new File(context.getCurrentFile().getParent(), includeFilename);
-        List snippets = loadFile(includeFile);
         context.getFileStack().push(includeFile);
+        System.out.println("Begin processing - " + includeFile.toPath().normalize());
+        List snippets = loadFile(includeFile);
         context.setSnippets(snippets);
+    }
+
+    /**
+     * Process the "include once" snippet.
+     *
+     * <p>
+     * The following steps happen upon an include.
+     * </p>
+     * <ol>
+     * <li>The current list of snippets is pushed onto the stack</li>
+     * <li>A new empty list of snippets is set for processing</li>
+     * <li>The snippets coming from the include file are loaded</li>
+     * </li>
+     *
+     * @param context the context.
+     * @param includeFilename the include filename.
+     */
+    private void processIncludeOnceSnippet(ParrotContext context, String includeFilename) {
+        context.getSnippetStack().push(context.getSnippets());
+        File includeFile = new File(context.getCurrentFile().getParent(), includeFilename);
+        context.getFileStack().push(includeFile);
+        System.out.println("Begin processing - " + includeFile.toPath().normalize());
+        List snippets = loadFile(includeFile);
+        List list = new ArrayList();
+        for(int i=0; i<snippets.size(); i++) {
+            if (snippets.get(i) instanceof HtmlCommentBlock) {
+                HtmlCommentBlock comment = (HtmlCommentBlock) snippets.get(i);
+                String firstLine = comment.getContentChars(0, 1).toString();
+                if (!firstLine.startsWith("<!-- workflow.include")) {
+                    list.add(snippets.get(i));
+                }
+            } else {
+                list.add(snippets.get(i));
+            }
+        }
+        context.setSnippets(list);
     }
 
     /**
@@ -472,7 +511,7 @@ public class Parrot {
         } else if (snippet instanceof HtmlCommentBlock) {
             HtmlCommentBlock comment = (HtmlCommentBlock) snippet;
             processCommentSnippet(context, comment);
-        } else {
+        } else if (snippet != null) {
             context.getScriptBuilder().append(snippet.toString());
             context.getScriptBuilder().append("\n");
         }
