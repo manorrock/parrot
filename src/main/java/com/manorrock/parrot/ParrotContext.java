@@ -37,6 +37,11 @@ import java.util.Stack;
  * @author Manfred Riem (mriem@manorrock.com)
  */
 public class ParrotContext {
+    
+    /**
+     * Stores the runs-on.
+     */
+    private String runsOn = "ubuntu-latest";
 
     /**
      * Stores the file stack.
@@ -84,6 +89,15 @@ public class ParrotContext {
      */
     public File getCurrentFile() {
         return fileStack.peek();
+    }
+
+    /**
+     * Get the runs-on.
+     * 
+     * @return the runs-on.
+     */
+    public String getRunsOn() {
+        return runsOn;
     }
 
     /**
@@ -147,6 +161,15 @@ public class ParrotContext {
      */
     public void setCurrentFile(File currentFile) {
         fileStack.push(currentFile);
+    }
+
+    /**
+     * Set the runs-on.
+     * 
+     * @param runsOn the runs-on.
+     */
+    public void setRunsOn(String runsOn) {
+        this.runsOn = runsOn;
     }
 
     /**

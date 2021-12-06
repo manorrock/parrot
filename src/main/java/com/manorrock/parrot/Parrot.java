@@ -64,6 +64,11 @@ public class Parrot {
      * Stores the base directory.
      */
     private File baseDirectory;
+    
+    /**
+     * Stores the default runs-on.
+     */
+    private String runsOn;
 
     /**
      * Stores the output directory.
@@ -94,6 +99,9 @@ public class Parrot {
                 }
                 if (arguments[i].equals("--outputDirectory")) {
                     outputDirectory = new File(arguments[i + 1]);
+                }
+                if (arguments[i].equals("--runsOn")) {
+                    runsOn = arguments[i + 1];
                 }
             }
         }
@@ -132,6 +140,9 @@ public class Parrot {
     private void processFile(File file) {
         System.out.println("--- Processing file: " + file);
         ParrotContext context = new ParrotContext();
+        if (runsOn != null) {
+            context.setRunsOn(runsOn);
+        }
         context.setCurrentFile(file);
         context.getSnippets().addAll(loadFile(file));
         context.setOutputFilename(getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".yml");
