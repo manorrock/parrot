@@ -45,6 +45,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,12 +54,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.System.Logger.Level.INFO;
+
 /**
  * The GitHub Workflow Generator.
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
 public class Parrot {
+
+    /**
+     * Stores the logger.
+     */
+    private static final Logger LOGGER = System.getLogger(Parrot.class.getName());
 
     /**
      * Stores the base directory.
@@ -138,7 +146,7 @@ public class Parrot {
      * @param file the file to process.
      */
     void processFile(File file) {
-        System.out.println("--- Processing file: " + file);
+        LOGGER.log(INFO, "--- Processing file: " + file);
         ParrotContext context = new ParrotContext();
         if (runsOn != null) {
             context.setRunsOn(runsOn);
@@ -155,7 +163,7 @@ public class Parrot {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        System.out.println(stringWriter.toString());
+        LOGGER.log(INFO, stringWriter.toString());
         if (!outputDirectory.exists()) {
             outputDirectory.mkdirs();
         }
@@ -176,11 +184,10 @@ public class Parrot {
     /**
      * Collect the Markdown nodes.
      *
-     * @param context the context.
      * @param file the file to include.
      */
     private List loadFile(File file) {
-        System.out.println("--- Loading file - " + file.toPath().normalize());
+        LOGGER.log(INFO, "--- Loading file - " + file.toPath().normalize());
         ArrayList<Node> nodes = new ArrayList<>();
         try {
             MutableDataSet options = new MutableDataSet();
@@ -213,7 +220,7 @@ public class Parrot {
      * @return the GitHub workflow.
      */
     private Workflow generateWorkflow(ParrotContext context) {
-        System.out.println("--- Generating GitHub workflow");
+        LOGGER.log(INFO, "--- Generating GitHub workflow");
         Workflow workflow = new Workflow();
         workflow.setName(getRelativeFilename(context.getCurrentFile()));
         HashMap<String, Object> jobs = new HashMap<>();
@@ -242,7 +249,7 @@ public class Parrot {
             if (context.getSnippets().isEmpty() && !context.getSnippetStack().isEmpty()) {
                 context.setSnippets((ArrayList) context.getSnippetStack().pop());
                 File processedFile = (File) context.getFileStack().peek();
-                System.out.println("End processing - " + processedFile.toPath().normalize());
+                LOGGER.log(INFO, "End processing - " + processedFile.toPath().normalize());
                 context.getFileStack().pop();
             }
         }
@@ -377,7 +384,7 @@ public class Parrot {
         context.getSnippetStack().push(context.getSnippets());
         File includeFile = new File(context.getCurrentFile().getParent(), includeFilename);
         context.getFileStack().push(includeFile);
-        System.out.println("Begin processing - " + includeFile.toPath().normalize());
+        LOGGER.log(INFO, "Begin processing - " + includeFile.toPath().normalize());
         List snippets = loadFile(includeFile);
         context.setSnippets(snippets);
     }
@@ -401,7 +408,7 @@ public class Parrot {
         context.getSnippetStack().push(context.getSnippets());
         File includeFile = new File(context.getCurrentFile().getParent(), includeFilename);
         context.getFileStack().push(includeFile);
-        System.out.println("Begin processing - " + includeFile.toPath().normalize());
+        LOGGER.log(INFO, "Begin processing - " + includeFile.toPath().normalize());
         List snippets = loadFile(includeFile);
         List list = new ArrayList();
         for(int i=0; i<snippets.size(); i++) {
