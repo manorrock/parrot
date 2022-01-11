@@ -55,6 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.System.Logger.Level.INFO;
+import static java.lang.System.Logger.Level.WARNING;
 
 /**
  * The GitHub Workflow Generator.
@@ -381,12 +382,18 @@ public class Parrot {
      * @param includeFilename the include filename.
      */
     private void processIncludeSnippet(ParrotContext context, String includeFilename) {
-        context.getSnippetStack().push(context.getSnippets());
         File includeFile = new File(context.getCurrentFile().getParent(), includeFilename);
-        context.getFileStack().push(includeFile);
-        LOGGER.log(INFO, "Begin processing - " + includeFile.toPath().normalize());
-        List snippets = loadFile(includeFile);
-        context.setSnippets(snippets);
+        if (includeFile.exists()) {
+            context.getSnippetStack().push(context.getSnippets());
+            context.getFileStack().push(includeFile);
+            LOGGER.log(INFO, "Begin processing - " + includeFile.toPath().normalize());
+            List snippets = loadFile(includeFile);
+            context.setSnippets(snippets);
+        } else {
+            LOGGER.log(WARNING, "File could not be found: " + includeFile.toPath().normalize());
+            context.getScriptBuilder().append("# WARN File could not be found: " + includeFile.toPath().normalize());
+            context.getScriptBuilder().append("\n");
+        }
     }
 
     /**

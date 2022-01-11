@@ -38,6 +38,10 @@ This includes the file into the generated workflow
 
 <!-- workflow.include(./to_be_included.md) -->
 
+This included file doesn't exit, a comment should be generated in the workflow
+
+<!-- workflow.include(./dummy.md) -->
+
 ## Shell
 
 Anything in a shell is added to the workflow:
