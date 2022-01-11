@@ -1,0 +1,19 @@
+on: 
+  schedule: 
+    - cron: '0 1 * * 2'
+  workflow_dispatch: 
+
+name: 'README.md'
+jobs: 
+  validate: 
+    runs-on: 'ubuntu-latest'
+    steps: 
+      - uses: 'azure/login@v1'
+        with: 
+          allow-no-subscriptions: 'true'
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - uses: 'actions/checkout@v2'
+      - run: | 
+          This is workflow.directOnly()
+          This is a shell that is included from another file
+          This is a shell
