@@ -137,7 +137,7 @@ public class Parrot {
      *
      * @param file the file to process.
      */
-    private void processFile(File file) {
+    void processFile(File file) {
         System.out.println("--- Processing file: " + file);
         ParrotContext context = new ParrotContext();
         if (runsOn != null) {
@@ -145,7 +145,7 @@ public class Parrot {
         }
         context.setCurrentFile(file);
         context.getSnippets().addAll(loadFile(file));
-        context.setOutputFilename(getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".yml");
+        context.setOutputFilename(generateOutputFilename(file));
         Workflow workflow = generateWorkflow(context);
         StringWriter stringWriter = new StringWriter();
         try {
@@ -167,6 +167,10 @@ public class Parrot {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+
+    String generateOutputFilename(File file) {
+        return getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".yml";
     }
 
     /**
@@ -560,5 +564,21 @@ public class Parrot {
         if (context.getSnippetStack().isEmpty()) {
             context.getWorkflow().setName(name);
         }
+    }
+
+    public File getBaseDirectory() {
+        return baseDirectory;
+    }
+
+    public void setBaseDirectory(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
+
+    public File getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 }
