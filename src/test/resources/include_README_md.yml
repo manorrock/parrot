@@ -13,3 +13,4 @@ jobs:
       - uses: 'actions/checkout@v2'
       - run: | 
           This is a shell that is included from another file
+          # WARN File could not be found: src/test/resources/dummy.md
