@@ -226,7 +226,7 @@ public class Parrot {
         workflow.setName(getRelativeFilename(context.getCurrentFile()));
         HashMap<String, Object> jobs = new HashMap<>();
         Job job = new Job();
-        job.setRunsOn("ubuntu-latest");
+        job.setRunsOn(context.getRunsOn());
         jobs.put("validate", job);
         workflow.setJobs(jobs);
         LinkedHashMap<String, Object> login = new LinkedHashMap<>();
