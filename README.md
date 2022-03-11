@@ -62,3 +62,7 @@ To skip a snippet for inclusion use the following:
 ```
 <!-- workflow.skip() -->
 ```
+
+## How do I contribute?
+
+See [Contributing](CONTRIBUTING.md)

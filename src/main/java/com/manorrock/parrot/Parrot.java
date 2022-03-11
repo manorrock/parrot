@@ -234,6 +234,9 @@ public class Parrot {
         HashMap<String, Object> with = new HashMap<>();
         with.put("creds", "${{ secrets.AZURE_CREDENTIALS }}");
         with.put("allow-no-subscriptions", "true");
+        if (context.getRunsOn().contains("windows")) {
+            with.put("enable-AzPSSession", "true");
+        }
         login.put("with", with);
         LinkedHashMap<String, Object> checkout = new LinkedHashMap<>();
         checkout.put("uses", "actions/checkout@v2");
