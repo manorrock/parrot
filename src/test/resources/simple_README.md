@@ -29,6 +29,7 @@ This is workflow.run()
 Appears in the workflow as is
 
 <!-- workflow.directOnly()
+export ARO_NAME=aro-$RANDOM
 This is workflow.directOnly() 
   -->
 

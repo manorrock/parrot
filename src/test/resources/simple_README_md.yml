@@ -1,0 +1,21 @@
+on: 
+  schedule: 
+    - cron: '0 1 * * 2'
+  workflow_dispatch: 
+
+name: 'simple_README.md'
+jobs: 
+  validate: 
+    runs-on: 'ubuntu-latest'
+    steps: 
+      - uses: 'azure/login@v1'
+        with: 
+          allow-no-subscriptions: 'true'
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - uses: 'actions/checkout@v2'
+      - run: | 
+          export ARO_NAME=aro-$RANDOM
+          This is workflow.directOnly()
+          This is a shell that is included from another file
+          # WARN File could not be found: src/test/resources/dummy.md
+          This is a shell
