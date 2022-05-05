@@ -47,47 +47,86 @@ public class ParrotTest {
         gwg = new Parrot();
         gwg.setBaseDirectory(new File("src/test/resources"));
         gwg.setOutputDirectory(new File("target"));
+        gwg.setShellScriptOutputDirectory(new File("target"));
     }
 
     @Test
     void generateEmptyReadme() throws IOException {
         File inputFile = new File("src/test/resources/empty_README.md");
-        String outputFilename = gwg.generateOutputFilename(inputFile);
+        String workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
+        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
 
         // Generates the workflow
         gwg.processFile(inputFile);
 
         // Checks if the workflow is correct
-        Path testWorkflow = gwg.getBaseDirectory().toPath().resolve(outputFilename);
-        Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(outputFilename);
+        Path testWorkflow = gwg.getBaseDirectory().toPath().resolve(workflowOutputFilename);
+        Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(workflowOutputFilename);
         assertEquals(-1l, Files.mismatch(testWorkflow, generatedWorkflow));
+
+        // Checks if the shell script is correct
+        Path testShellscript = gwg.getBaseDirectory().toPath().resolve(shellScriptOutputFilename);
+        Path generatedShellscript = gwg.getShellScriptOutputDirectory().toPath().resolve(shellScriptOutputFilename);
+        assertEquals(-1l, Files.mismatch(testShellscript, generatedShellscript));
     }
 
     @Test
-    void generateReadme() throws IOException {
-        File inputFile = new File("src/test/resources/README.md");
-        String outputFilename = gwg.generateOutputFilename(inputFile);
+    void generateSimpleReadme() throws IOException {
+        File inputFile = new File("src/test/resources/simple_README.md");
+        String workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
+        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
 
         // Generates the workflow
         gwg.processFile(inputFile);
 
         // Checks if the workflow is correct
-        Path testWorkflow = gwg.getBaseDirectory().toPath().resolve(outputFilename);
-        Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(outputFilename);
+        Path testWorkflow = gwg.getBaseDirectory().toPath().resolve(workflowOutputFilename);
+        Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(workflowOutputFilename);
         assertEquals(-1l, Files.mismatch(testWorkflow, generatedWorkflow));
+        
+        // Checks if the shell script is correct
+        Path testShellscript = gwg.getBaseDirectory().toPath().resolve(shellScriptOutputFilename);
+        Path generatedShellscript = gwg.getShellScriptOutputDirectory().toPath().resolve(shellScriptOutputFilename);
+        assertEquals(-1l, Files.mismatch(testShellscript, generatedShellscript));
     }
 
     @Test
     void generateReadmeWithInclude() throws IOException {
         File inputFile = new File("src/test/resources/include_README.md");
-        String outputFilename = gwg.generateOutputFilename(inputFile);
+        String workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
+        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
 
         // Generates the workflow
         gwg.processFile(inputFile);
 
         // Checks if the workflow is correct
-        Path testWorkflow = gwg.getBaseDirectory().toPath().resolve(outputFilename);
-        Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(outputFilename);
+        Path testWorkflow = gwg.getBaseDirectory().toPath().resolve(workflowOutputFilename);
+        Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(workflowOutputFilename);
         assertEquals(-1l, Files.mismatch(testWorkflow, generatedWorkflow));
+
+        // Checks if the shell script is correct
+        Path testShellscript = gwg.getBaseDirectory().toPath().resolve(shellScriptOutputFilename);
+        Path generatedShellscript = gwg.getShellScriptOutputDirectory().toPath().resolve(shellScriptOutputFilename);
+        assertEquals(-1l, Files.mismatch(testShellscript, generatedShellscript));
+    }
+    @Test
+    void generateFileNames() throws IOException {
+        File inputFile = new File("src/test/resources/empty_README.md");
+        String workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
+        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
+        assertEquals("empty_README_md.yml", workflowOutputFilename);
+        assertEquals("empty.sh", shellScriptOutputFilename);
+
+        inputFile = new File("src/test/resources/simple_README.md");
+        workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
+        shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
+        assertEquals("simple_README_md.yml", workflowOutputFilename);
+        assertEquals("simple.sh", shellScriptOutputFilename);
+
+        inputFile = new File("src/test/resources/include_README.md");
+        workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
+        shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
+        assertEquals("include_README_md.yml", workflowOutputFilename);
+        assertEquals("include.sh", shellScriptOutputFilename);
     }
 }

@@ -38,6 +38,7 @@ import com.manorrock.parrot.model.Cron;
 import com.manorrock.parrot.model.Job;
 import com.manorrock.parrot.model.On;
 import com.manorrock.parrot.model.Push;
+import com.manorrock.parrot.model.ShellScript;
 import com.manorrock.parrot.model.Workflow;
 import com.manorrock.parrot.model.WorkflowDispatch;
 import java.io.File;
@@ -45,6 +46,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,16 +75,21 @@ public class Parrot {
      * Stores the base directory.
      */
     private File baseDirectory;
-    
+
     /**
      * Stores the default runs-on.
      */
     private String runsOn;
 
     /**
-     * Stores the output directory.
+     * Stores the workflows output directory.
      */
     private File outputDirectory = new File(".");
+
+    /**
+     * Stores the shell scripts output directory.
+     */
+    private File shellScriptOutputDirectory = new File(".script");
 
     /**
      * Main method.
@@ -114,7 +121,12 @@ public class Parrot {
                 }
             }
         }
-    }
+        LOGGER.log(INFO, "--- Arguments: ");
+        LOGGER.log(INFO, "    --baseDirectory: " + baseDirectory);
+        LOGGER.log(INFO, "    --outputDirectory: " + outputDirectory);
+        LOGGER.log(INFO, "    --shellScriptOutputDirectory: " + shellScriptOutputDirectory);
+        LOGGER.log(INFO, "    --runsOn " + runsOn);
+        }
 
     /**
      * Run the generator.
@@ -149,17 +161,23 @@ public class Parrot {
     void processFile(File file) {
         LOGGER.log(INFO, "--- Processing file: " + file);
         ParrotContext context = new ParrotContext();
+        ShellScript shellScript;
         if (runsOn != null) {
             context.setRunsOn(runsOn);
         }
         context.setCurrentFile(file);
         context.getSnippets().addAll(loadFile(file));
-        context.setOutputFilename(generateOutputFilename(file));
+        context.setWorkflowOutputFilename(generateWorkflowOutputFilename(file));
+        context.setShellScriptOutputFilename(generateShellScriptOutputFilename(file));
+        // Generates the workflow
         Workflow workflow = generateWorkflow(context);
         StringWriter stringWriter = new StringWriter();
         try {
             YAMLWriter writer = new YAMLWriter(stringWriter);
             writer.writeObject(workflow);
+            // Generates the shell script
+            shellScript = generateShellScriptFromWorkflow(stringWriter, workflow.getName());
+            context.setShellScript(shellScript);
             writer.flush();
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -168,18 +186,33 @@ public class Parrot {
         if (!outputDirectory.exists()) {
             outputDirectory.mkdirs();
         }
+        if (!shellScriptOutputDirectory.exists()) {
+            shellScriptOutputDirectory.mkdirs();
+        }
         try {
-            File outputFile = new File(outputDirectory, context.getOutputFilename());
-            FileWriter outputWriter = new FileWriter(outputFile);
-            outputWriter.write(stringWriter.toString());
-            outputWriter.flush();
+            // Writes the workflow file
+            File workflowOutputFile = new File(outputDirectory, context.getWorkflowOutputFilename());
+            FileWriter workflowOutputWriter = new FileWriter(workflowOutputFile);
+            workflowOutputWriter.write(stringWriter.toString());
+            workflowOutputWriter.flush();
+            // Writes the shell script file
+            File shellScriptOutputFile = new File(shellScriptOutputDirectory, context.getShellScriptOutputFilename());
+            FileWriter shellScriptOutputWriter = new FileWriter(shellScriptOutputFile);
+            shellScriptOutputWriter.write(context.getShellScript().getPayload());
+            shellScriptOutputWriter.flush();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
 
-    String generateOutputFilename(File file) {
+    String generateWorkflowOutputFilename(File file) {
         return getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".yml";
+    }
+
+    String generateShellScriptOutputFilename(File file) {
+        String filename = getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".sh";
+        filename = filename.replaceAll("_README_md", "");
+        return filename;
     }
 
     /**
@@ -261,6 +294,27 @@ public class Parrot {
         job.getSteps().add(run);
         return workflow;
     }
+
+    public ShellScript generateShellScriptFromWorkflow(Writer workflowWriter, String workflowName) {
+        LOGGER.log(INFO, "--- Generating Shell script from workflow");
+        ShellScript shellScript = new ShellScript();
+        shellScript.setName(workflowName);
+        String workflow = workflowWriter.toString();
+        // Add shebang
+        String payload = "#!/bin/bash\ncd ..\n";
+        int beginningOfScript = workflow.indexOf("- run: |");
+        if (workflow.length() < beginningOfScript + 9) {
+            payload += "# There is no script in this file";
+        } else {
+            // Remove the beginning of the workflow until -run:
+            payload += workflow.substring(beginningOfScript +  9);
+            // Removes all the blanks
+            payload = payload.replaceAll("          ", "");
+        }
+        shellScript.setPayload(payload);
+        return shellScript;
+    }
+
 
     /**
      * Get relative filename.
@@ -421,7 +475,7 @@ public class Parrot {
         LOGGER.log(INFO, "Begin processing - " + includeFile.toPath().normalize());
         List snippets = loadFile(includeFile);
         List list = new ArrayList();
-        for(int i=0; i<snippets.size(); i++) {
+        for (int i = 0; i < snippets.size(); i++) {
             if (snippets.get(i) instanceof HtmlCommentBlock) {
                 HtmlCommentBlock comment = (HtmlCommentBlock) snippets.get(i);
                 String firstLine = comment.getContentChars(0, 1).toString();
@@ -443,7 +497,7 @@ public class Parrot {
      */
     private void processOutputFilename(ParrotContext context, String outputFilename) {
         if (context.getSnippetStack().isEmpty()) {
-            context.setOutputFilename(outputFilename);
+            context.setWorkflowOutputFilename(outputFilename);
         }
     }
 
@@ -597,5 +651,13 @@ public class Parrot {
 
     public void setOutputDirectory(File outputDirectory) {
         this.outputDirectory = outputDirectory;
+    }
+
+    public File getShellScriptOutputDirectory() {
+        return shellScriptOutputDirectory;
+    }
+
+    public void setShellScriptOutputDirectory(File shellScriptOutputDirectory) {
+        this.shellScriptOutputDirectory = shellScriptOutputDirectory;
     }
 }

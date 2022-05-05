@@ -25,6 +25,7 @@
  */
 package com.manorrock.parrot;
 
+import com.manorrock.parrot.model.ShellScript;
 import com.manorrock.parrot.model.Workflow;
 import java.io.File;
 import java.util.ArrayList;
@@ -49,9 +50,14 @@ public class ParrotContext {
     private final Stack<File> fileStack;
 
     /**
-     * Stores the output filename.
+     * Stores the workflow output filename.
      */
-    private String outputFilename;
+    private String workflowOutputFilename;
+
+    /**
+     * Stores the shell script output filename.
+     */
+    private String shellScriptOutputFilename;
 
     /**
      * Stores the script builder.
@@ -72,6 +78,11 @@ public class ParrotContext {
      * Stores the workflow.
      */
     private Workflow workflow;
+
+    /**
+     * Stores the shell script.
+     */
+    private ShellScript shellScript;
 
     /**
      * Constructor.
@@ -137,12 +148,21 @@ public class ParrotContext {
     }
 
     /**
-     * Get the output filename.
+     * Get the workflow output filename.
      * 
-     * @return the output filename.
+     * @return the workflow output filename.
      */
-    public String getOutputFilename() {
-        return outputFilename;
+    public String getWorkflowOutputFilename() {
+        return workflowOutputFilename;
+    }
+
+    /**
+     * Get the shell script output filename.
+     * 
+     * @return the shell script output filename.
+     */
+    public String getShellScriptOutputFilename() {
+        return shellScriptOutputFilename;
     }
 
     /**
@@ -152,6 +172,15 @@ public class ParrotContext {
      */
     public Workflow getWorkflow() {
         return workflow;
+    }
+
+    /**
+     * Get the shell script.
+     *
+     * @return the shell script.
+     */
+    public ShellScript getShellScript() {
+        return shellScript;
     }
 
     /**
@@ -173,12 +202,21 @@ public class ParrotContext {
     }
 
     /**
-     * Set the output filename.
+     * Set the workflow output filename.
      *
-     * @param outputFilename the output filename.
+     * @param workflowOutputFilename the workflow output filename.
      */
-    public void setOutputFilename(String outputFilename) {
-        this.outputFilename = outputFilename;
+    public void setWorkflowOutputFilename(String workflowOutputFilename) {
+        this.workflowOutputFilename = workflowOutputFilename;
+    }
+
+    /**
+     * Set the shell script output filename.
+     *
+     * @param shellScriptOutputFilename the shell script output filename.
+     */
+    public void setShellScriptOutputFilename(String shellScriptOutputFilename) {
+        this.shellScriptOutputFilename = shellScriptOutputFilename;
     }
 
     /**
@@ -206,5 +244,14 @@ public class ParrotContext {
      */
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    /**
+     * Set the workflow.
+     *
+     * @param shellScript the shell script.
+     */
+    public void setShellScript(ShellScript shellScript) {
+        this.shellScript = shellScript;
     }
 }
