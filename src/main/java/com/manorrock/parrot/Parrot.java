@@ -189,7 +189,7 @@ public class Parrot {
         if (!outputDirectory.exists()) {
             outputDirectory.mkdirs();
         }
-        if (!shellScriptOutputDirectory.exists()) {
+        if (shellScriptOutputDirectory != null && !shellScriptOutputDirectory.exists()) {
             shellScriptOutputDirectory.mkdirs();
         }
         try {
