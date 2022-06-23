@@ -89,7 +89,7 @@ public class Parrot {
     /**
      * Stores the shell scripts output directory.
      */
-    private File shellScriptOutputDirectory = new File(".script");
+    private File shellScriptOutputDirectory;
 
     /**
      * Main method.
@@ -116,6 +116,9 @@ public class Parrot {
                 if (arguments[i].equals("--outputDirectory")) {
                     outputDirectory = new File(arguments[i + 1]);
                 }
+                if (arguments[i].equals("--shellScriptOutputDirectory")) {
+                    shellScriptOutputDirectory = new File(arguments[i + 1]);
+                }
                 if (arguments[i].equals("--runsOn")) {
                     runsOn = arguments[i + 1];
                 }
@@ -126,7 +129,7 @@ public class Parrot {
         LOGGER.log(INFO, "    --outputDirectory: " + outputDirectory);
         LOGGER.log(INFO, "    --shellScriptOutputDirectory: " + shellScriptOutputDirectory);
         LOGGER.log(INFO, "    --runsOn " + runsOn);
-        }
+    }
 
     /**
      * Run the generator.
@@ -195,11 +198,12 @@ public class Parrot {
             FileWriter workflowOutputWriter = new FileWriter(workflowOutputFile);
             workflowOutputWriter.write(stringWriter.toString());
             workflowOutputWriter.flush();
-            // Writes the shell script file
-            File shellScriptOutputFile = new File(shellScriptOutputDirectory, context.getShellScriptOutputFilename());
-            FileWriter shellScriptOutputWriter = new FileWriter(shellScriptOutputFile);
-            shellScriptOutputWriter.write(context.getShellScript().getPayload());
-            shellScriptOutputWriter.flush();
+            if (shellScriptOutputDirectory != null) {
+                File shellScriptOutputFile = new File(shellScriptOutputDirectory, context.getShellScriptOutputFilename());
+                FileWriter shellScriptOutputWriter = new FileWriter(shellScriptOutputFile);
+                shellScriptOutputWriter.write(context.getShellScript().getPayload());
+                shellScriptOutputWriter.flush();
+            }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -307,14 +311,13 @@ public class Parrot {
             payload += "# There is no script in this file";
         } else {
             // Remove the beginning of the workflow until -run:
-            payload += workflow.substring(beginningOfScript +  9);
+            payload += workflow.substring(beginningOfScript + 9);
             // Removes all the blanks
             payload = payload.replaceAll("          ", "");
         }
         shellScript.setPayload(payload);
         return shellScript;
     }
-
 
     /**
      * Get relative filename.
