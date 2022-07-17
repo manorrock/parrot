@@ -25,8 +25,8 @@
  */
 package com.manorrock.parrot;
 
-import com.manorrock.yaml.YAMLLiteralBlock;
-import com.manorrock.yaml.YAMLWriter;
+import com.manorrock.parakeet.YAMLLiteralBlock;
+import com.manorrock.parakeet.YAMLWriter;
 import com.vladsch.flexmark.ast.FencedCodeBlock;
 import com.vladsch.flexmark.ast.HtmlCommentBlock;
 import com.vladsch.flexmark.parser.Parser;

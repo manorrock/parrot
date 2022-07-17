@@ -25,7 +25,7 @@
  */
 package com.manorrock.parrot.model;
 
-import com.manorrock.yaml.YAMLSerializerHint;
+import com.manorrock.parakeet.YAMLSerializerHint;
 import java.util.ArrayList;
 import java.util.List;
 

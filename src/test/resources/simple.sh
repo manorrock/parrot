@@ -1,6 +1,5 @@
 #!/bin/bash
 cd ..
-
 export ARO_NAME=aro-$RANDOM
 This is workflow.directOnly()
 This is a shell that is included from another file

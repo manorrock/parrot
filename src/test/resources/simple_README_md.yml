@@ -13,7 +13,7 @@ jobs:
           allow-no-subscriptions: 'true'
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
       - uses: 'actions/checkout@v2'
-      - run: | 
+      - run: |
           export ARO_NAME=aro-$RANDOM
           This is workflow.directOnly()
           This is a shell that is included from another file
