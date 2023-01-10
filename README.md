@@ -63,6 +63,15 @@ To skip a snippet for inclusion use the following:
 <!-- workflow.skip() -->
 ```
 
+## How do you generate GitHub workflows?
+
+In the root directory of your GitHub repository the following invocation will
+generate the GitHub workflows into the .github/workflows directory.
+
+```
+ java -jar parrot.jar --baseDirectory . --outputDirectory .github/workflows
+```
+
 ## How do I contribute?
 
 See [Contributing](CONTRIBUTING.md)
