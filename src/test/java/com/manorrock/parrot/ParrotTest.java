@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests Workflow Generator.
@@ -128,5 +129,25 @@ public class ParrotTest {
         shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
         assertEquals("include_README_md.yml", workflowOutputFilename);
         assertEquals("include.sh", shellScriptOutputFilename);
+    }
+    
+    /**
+     * Test a cron snippet.
+     */
+    @Test
+    void testCronSnippet() throws IOException {
+        File inputFile = new File("src/test/resources/cron.md");
+        File outputDirectory = new File("target/parrotTest");
+        outputDirectory.mkdirs();
+        Parrot parrot = new Parrot();
+        parrot.setBaseDirectory(new File("src/test/resources"));
+        parrot.setOutputDirectory(outputDirectory);
+        parrot.processFile(inputFile);
+        File outputFile = new File("target/parrotTest/cron_md.yml");
+        String content = new String(Files.readAllBytes(outputFile.toPath()));
+        assertTrue(content.contains(
+                "on: \n" +
+                "  schedule: \n" +
+                "    - cron: '0 1 * * 2'"));
     }
 }
