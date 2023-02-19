@@ -1,5 +1,7 @@
 # Manorrock Parrot - a GitHub Workflow Generator
 
+[![build](https://github.com/manorrock/parrot/actions/workflows/build.yml/badge.svg)](https://github.com/manorrock/parrot/actions/workflows/build.yml)
+
 ## Cron
 
 To set the cron schedule for a given workflow use
