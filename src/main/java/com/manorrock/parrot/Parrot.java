@@ -276,7 +276,7 @@ public class Parrot {
         }
         login.put("with", with);
         LinkedHashMap<String, Object> checkout = new LinkedHashMap<>();
-        checkout.put("uses", "actions/checkout@v2");
+        checkout.put("uses", "actions/checkout@v3");
         job.getSteps().add(login);
         job.getSteps().add(checkout);
         HashMap<String, Object> run = new HashMap<>();
