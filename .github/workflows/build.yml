@@ -2,7 +2,9 @@ name: build
 on: 
   push:
     branches:
-      - 'current'
+      - '*'
+    tags-ignore:
+      - 'v*'
   pull_request:
     branches:
       - '*'  
