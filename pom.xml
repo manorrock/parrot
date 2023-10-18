@@ -23,7 +23,7 @@
     <properties>
         <!-- dependencies -->
         <flexmark.version>0.64.0</flexmark.version>
-        <parakeet.version>22.3.1</parakeet.version>
+        <parakeet.version>23.5.0</parakeet.version>
         <junit.version>5.8.2</junit.version>
         <!-- other -->
         <java.version>21</java.version>
