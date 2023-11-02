@@ -55,7 +55,6 @@ public class ParrotTest {
     void generateEmptyReadme() throws IOException {
         File inputFile = new File("src/test/resources/empty_README.md");
         String workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
-        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
 
         // Generates the workflow
         gwg.processFile(inputFile);
@@ -65,6 +64,10 @@ public class ParrotTest {
         Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(workflowOutputFilename);
         assertEquals(-1l, Files.mismatch(testWorkflow, generatedWorkflow));
 
+        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
+        gwg.setMode("bash");
+        gwg.processFile(inputFile);
+        
         // Checks if the shell script is correct
         Path testShellscript = gwg.getBaseDirectory().toPath().resolve(shellScriptOutputFilename);
         Path generatedShellscript = gwg.getShellScriptOutputDirectory().toPath().resolve(shellScriptOutputFilename);
@@ -75,7 +78,6 @@ public class ParrotTest {
     void generateSimpleReadme() throws IOException {
         File inputFile = new File("src/test/resources/simple_README.md");
         String workflowOutputFilename = gwg.generateWorkflowOutputFilename(inputFile);
-        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
 
         // Generates the workflow
         gwg.processFile(inputFile);
@@ -85,6 +87,10 @@ public class ParrotTest {
         Path generatedWorkflow = gwg.getOutputDirectory().toPath().resolve(workflowOutputFilename);
         assertEquals(-1l, Files.mismatch(testWorkflow, generatedWorkflow));
         
+        String shellScriptOutputFilename = gwg.generateShellScriptOutputFilename(inputFile);
+        gwg.setMode("bash");
+        gwg.processFile(inputFile);
+ 
         // Checks if the shell script is correct
         Path testShellscript = gwg.getBaseDirectory().toPath().resolve(shellScriptOutputFilename);
         Path generatedShellscript = gwg.getShellScriptOutputDirectory().toPath().resolve(shellScriptOutputFilename);
