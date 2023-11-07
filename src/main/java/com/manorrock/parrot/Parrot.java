@@ -77,11 +77,6 @@ public class Parrot {
     private File baseDirectory;
 
     /**
-     * Stores the mode.
-     */
-    private String mode = "workflow";
-
-    /**
      * Stores the default runs-on.
      */
     private String runsOn;
@@ -118,9 +113,6 @@ public class Parrot {
                 if (arguments[i].equals("--baseDirectory")) {
                     baseDirectory = new File(arguments[i + 1]);
                 }
-                if (arguments[i].equals("--mode")) {
-                    mode = arguments[i + 1];
-                }
                 if (arguments[i].equals("--outputDirectory")) {
                     outputDirectory = new File(arguments[i + 1]);
                 }
@@ -134,7 +126,6 @@ public class Parrot {
         }
         LOGGER.log(INFO, "--- Arguments: ");
         LOGGER.log(INFO, "    --baseDirectory: " + baseDirectory);
-        LOGGER.log(INFO, "    --mode:" + mode);
         LOGGER.log(INFO, "    --outputDirectory: " + outputDirectory);
         LOGGER.log(INFO, "    --shellScriptOutputDirectory: " + shellScriptOutputDirectory);
         LOGGER.log(INFO, "    --runsOn " + runsOn);
@@ -145,15 +136,6 @@ public class Parrot {
      */
     private void run() {
         processDirectory(baseDirectory);
-    }
-
-    /**
-     * Set mode.
-     *
-     * @param mode the mode.
-     */
-    public void setMode(String mode) {
-        this.mode = mode;
     }
 
     /**
@@ -194,15 +176,12 @@ public class Parrot {
         Workflow workflow = generateWorkflow(context);
         StringWriter stringWriter = new StringWriter();
         try {
+            YAMLWriter writer = new YAMLWriter(stringWriter);
+            writer.writeObject(workflow);
             // Generates the shell script
             shellScript = generateShellScriptFromWorkflow(stringWriter, workflow.getName());
             context.setShellScript(shellScript);
-            // generate the workflow.
-            if (mode.equals("workflow")) {
-                YAMLWriter writer = new YAMLWriter(stringWriter);
-                writer.writeObject(workflow);
-                writer.flush();
-            }
+            writer.flush();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -219,7 +198,7 @@ public class Parrot {
             FileWriter workflowOutputWriter = new FileWriter(workflowOutputFile);
             workflowOutputWriter.write(stringWriter.toString());
             workflowOutputWriter.flush();
-            if (shellScriptOutputDirectory != null && mode.equals("bash")) {
+            if (shellScriptOutputDirectory != null) {
                 File shellScriptOutputFile = new File(shellScriptOutputDirectory, context.getShellScriptOutputFilename());
                 FileWriter shellScriptOutputWriter = new FileWriter(shellScriptOutputFile);
                 shellScriptOutputWriter.write(context.getShellScript().getPayload());
