@@ -2,6 +2,10 @@
 
 [![build](https://github.com/manorrock/parrot/actions/workflows/build.yml/badge.svg)](https://github.com/manorrock/parrot/actions/workflows/build.yml)
 
+## Prerequisites
+
+1. Java 21
+
 ## Cron
 
 To set the cron schedule for a given workflow use
