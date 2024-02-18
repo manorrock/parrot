@@ -375,6 +375,8 @@ public class Parrot {
                 processIncludeSnippet(context, matcher.group(2));
             } else if (action.equals("includeOnce")) {
                 processIncludeOnceSnippet(context, matcher.group(2));
+            } else if (action.equals("javaVersion")) {
+                processCronDirective(context, matcher.group(2));
             } else if (action.equals("name")) {
                 processWorkflowName(context, matcher.group(2));
             } else if (action.equals("pushPath")) {
@@ -406,6 +408,22 @@ public class Parrot {
                 on.setSchedule(new ArrayList<>());
             }
             on.getSchedule().add(new Cron(cron));
+        }
+    }
+    
+    /**
+     * Process the Java version directive.
+     *
+     * <p>
+     * This directive sets the Java version for the workflow.
+     * </p>
+     *
+     * @param context the context.
+     * @param javaVersion the Java version.
+     */
+    private void processJavaVersion(ParrotContext context, String javaVersion) {
+        if (context.getSnippetStack().isEmpty()) {
+            context.setJavaVersion(javaVersion);
         }
     }
 
