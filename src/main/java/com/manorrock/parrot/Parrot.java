@@ -266,6 +266,7 @@ public class Parrot {
         job.setRunsOn(context.getRunsOn());
         jobs.put("validate", job);
         workflow.setJobs(jobs);
+
         LinkedHashMap<String, Object> login = new LinkedHashMap<>();
         login.put("uses", "azure/login@v1");
         HashMap<String, Object> with = new HashMap<>();
@@ -275,10 +276,28 @@ public class Parrot {
             with.put("enable-AzPSSession", "true");
         }
         login.put("with", with);
+        job.getSteps().add(login);
+
         LinkedHashMap<String, Object> checkout = new LinkedHashMap<>();
         checkout.put("uses", "actions/checkout@v3");
-        job.getSteps().add(login);
         job.getSteps().add(checkout);
+        
+        /*
+         * - uses: actions/setup-java@v4
+         *   with:
+         *     distribution: 'temurin'
+         *     java-version: '21'
+         */
+
+        if (context.getJavaVersion() != null) {
+            LinkedHashMap<String, Object> java = new LinkedHashMap<>();
+            login.put("uses", "actions/setup-java@v4");
+            with = new HashMap<>();
+            with.put("distribution", "'temurin'");
+            with.put("java-version", "'" + context.getJavaVersion() + "'");
+            job.getSteps().add(java);
+        }
+
         HashMap<String, Object> run = new HashMap<>();
         YAMLLiteralBlock literalBlock = new YAMLLiteralBlock();
         run.put("run", literalBlock);
