@@ -281,22 +281,6 @@ public class Parrot {
         LinkedHashMap<String, Object> checkout = new LinkedHashMap<>();
         checkout.put("uses", "actions/checkout@v3");
         job.getSteps().add(checkout);
-        
-        /*
-         * - uses: actions/setup-java@v4
-         *   with:
-         *     distribution: 'temurin'
-         *     java-version: '21'
-         */
-
-        if (context.getJavaVersion() != null) {
-            LinkedHashMap<String, Object> java = new LinkedHashMap<>();
-            login.put("uses", "actions/setup-java@v4");
-            with = new HashMap<>();
-            with.put("distribution", "'temurin'");
-            with.put("java-version", "'" + context.getJavaVersion() + "'");
-            job.getSteps().add(java);
-        }
 
         HashMap<String, Object> run = new HashMap<>();
         YAMLLiteralBlock literalBlock = new YAMLLiteralBlock();
@@ -376,7 +360,7 @@ public class Parrot {
             } else if (action.equals("includeOnce")) {
                 processIncludeOnceSnippet(context, matcher.group(2));
             } else if (action.equals("javaVersion")) {
-                processCronDirective(context, matcher.group(2));
+                processJavaVersion(context, matcher.group(2));
             } else if (action.equals("name")) {
                 processWorkflowName(context, matcher.group(2));
             } else if (action.equals("pushPath")) {
@@ -410,7 +394,7 @@ public class Parrot {
             on.getSchedule().add(new Cron(cron));
         }
     }
-    
+
     /**
      * Process the Java version directive.
      *
@@ -422,8 +406,21 @@ public class Parrot {
      * @param javaVersion the Java version.
      */
     private void processJavaVersion(ParrotContext context, String javaVersion) {
-        if (context.getSnippetStack().isEmpty()) {
-            context.setJavaVersion(javaVersion);
+        /*
+         * - uses: actions/setup-java@v4
+         *   with:
+         *     distribution: 'temurin'
+         *     java-version: '21'
+         */
+        if (javaVersion != null) {
+            Job job = (Job) context.getWorkflow().getJobs().get("validate");
+            LinkedHashMap<String, Object> java = new LinkedHashMap<>();
+            java.put("uses", "actions/setup-java@v4");
+            HashMap<String, String> with = new HashMap<>();
+            with.put("distribution", "temurin");
+            with.put("java-version", javaVersion);
+            java.put("with", with);
+            job.getSteps().add(0, java);
         }
     }
 
@@ -619,7 +616,7 @@ public class Parrot {
      * @param context the context.
      */
     private void processSkip(ParrotContext context) {
-        if (context.getSnippets().size() > 0) {
+        if (!context.getSnippets().isEmpty()) {
             context.getSnippets().remove(0);
         }
     }
