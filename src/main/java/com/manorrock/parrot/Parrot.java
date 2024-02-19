@@ -266,6 +266,7 @@ public class Parrot {
         job.setRunsOn(context.getRunsOn());
         jobs.put("validate", job);
         workflow.setJobs(jobs);
+
         LinkedHashMap<String, Object> login = new LinkedHashMap<>();
         login.put("uses", "azure/login@v1");
         HashMap<String, Object> with = new HashMap<>();
@@ -275,10 +276,12 @@ public class Parrot {
             with.put("enable-AzPSSession", "true");
         }
         login.put("with", with);
+        job.getSteps().add(login);
+
         LinkedHashMap<String, Object> checkout = new LinkedHashMap<>();
         checkout.put("uses", "actions/checkout@v3");
-        job.getSteps().add(login);
         job.getSteps().add(checkout);
+
         HashMap<String, Object> run = new HashMap<>();
         YAMLLiteralBlock literalBlock = new YAMLLiteralBlock();
         run.put("run", literalBlock);
@@ -356,6 +359,8 @@ public class Parrot {
                 processIncludeSnippet(context, matcher.group(2));
             } else if (action.equals("includeOnce")) {
                 processIncludeOnceSnippet(context, matcher.group(2));
+            } else if (action.equals("javaVersion")) {
+                processJavaVersion(context, matcher.group(2));
             } else if (action.equals("name")) {
                 processWorkflowName(context, matcher.group(2));
             } else if (action.equals("pushPath")) {
@@ -387,6 +392,35 @@ public class Parrot {
                 on.setSchedule(new ArrayList<>());
             }
             on.getSchedule().add(new Cron(cron));
+        }
+    }
+
+    /**
+     * Process the Java version directive.
+     *
+     * <p>
+     * This directive sets the Java version for the workflow.
+     * </p>
+     *
+     * @param context the context.
+     * @param javaVersion the Java version.
+     */
+    private void processJavaVersion(ParrotContext context, String javaVersion) {
+        /*
+         * - uses: actions/setup-java@v4
+         *   with:
+         *     distribution: 'temurin'
+         *     java-version: '21'
+         */
+        if (javaVersion != null) {
+            Job job = (Job) context.getWorkflow().getJobs().get("validate");
+            LinkedHashMap<String, Object> java = new LinkedHashMap<>();
+            java.put("uses", "actions/setup-java@v4");
+            HashMap<String, String> with = new HashMap<>();
+            with.put("distribution", "temurin");
+            with.put("java-version", javaVersion);
+            java.put("with", with);
+            job.getSteps().add(0, java);
         }
     }
 
@@ -582,7 +616,7 @@ public class Parrot {
      * @param context the context.
      */
     private void processSkip(ParrotContext context) {
-        if (context.getSnippets().size() > 0) {
+        if (!context.getSnippets().isEmpty()) {
             context.getSnippets().remove(0);
         }
     }

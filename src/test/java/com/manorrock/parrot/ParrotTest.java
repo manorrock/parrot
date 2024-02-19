@@ -150,4 +150,21 @@ public class ParrotTest {
                 "  schedule: \n" +
                 "    - cron: '0 1 * * 2'"));
     }
+
+    /**
+     * Test a Java version snippet.
+     */
+    @Test
+    void testJavaVersionSnippet() throws IOException {
+        File inputFile = new File("src/test/resources/java.md");
+        File outputDirectory = new File("target/parrotTest");
+        outputDirectory.mkdirs();
+        Parrot parrot = new Parrot();
+        parrot.setBaseDirectory(new File("src/test/resources"));
+        parrot.setOutputDirectory(outputDirectory);
+        parrot.processFile(inputFile);
+        File outputFile = new File("target/parrotTest/java_md.yml");
+        String content = new String(Files.readAllBytes(outputFile.toPath()));
+        assertTrue(content.contains("java-version: '21'"));
+    }
 }

@@ -40,6 +40,11 @@ import java.util.Stack;
 public class ParrotContext {
     
     /**
+     * Stores the Java version.
+     */
+    private String javaVersion;
+    
+    /**
      * Stores the runs-on.
      */
     private String runsOn = "ubuntu-latest";
@@ -100,6 +105,15 @@ public class ParrotContext {
      */
     public File getCurrentFile() {
         return fileStack.peek();
+    }
+
+    /**
+     * Get the Java version.
+     * 
+     * @return the Java version.
+     */
+    public String getJavaVersion() {
+        return javaVersion;
     }
 
     /**
@@ -190,6 +204,15 @@ public class ParrotContext {
      */
     public void setCurrentFile(File currentFile) {
         fileStack.push(currentFile);
+    }
+    
+    /**
+     * Set the Java version.
+     * 
+     * @param javaVersion the Java version.
+     */
+    public void setJavaVersion(String javaVersion) {
+        this.javaVersion = javaVersion;
     }
 
     /**
