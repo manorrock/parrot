@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2023 Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2024 Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -50,6 +50,11 @@ public class Workflow {
     private Map<String, Object> jobs;
     
     /**
+     * Stores the permissions.
+     */
+    private Map<String, Object> permissions;
+    
+    /**
      * Constructor.
      */
     public Workflow() {
@@ -82,6 +87,15 @@ public class Workflow {
     public Map<String, Object> getJobs() {
         return jobs;
     }
+
+    /**
+     * Get the permissions.
+     * 
+     * @return 
+     */
+    public Map<String, Object> getPermissions() {
+        return permissions;
+    }
     
     /**
      * Set the on.
@@ -108,5 +122,14 @@ public class Workflow {
      */
     public void setJobs(Map<String, Object> jobs) {
         this.jobs = jobs;
+    }
+
+    /**
+     * Set the permissions.
+     * 
+     * @param permissions the permissions.
+     */
+    public void setPermissions(Map<String, Object> permissions) {
+        this.permissions = permissions;
     }
 }
