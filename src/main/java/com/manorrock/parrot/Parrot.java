@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2023 Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2024 Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -261,6 +261,12 @@ public class Parrot {
         LOGGER.log(INFO, "--- Generating GitHub workflow");
         Workflow workflow = new Workflow();
         workflow.setName(getRelativeFilename(context.getCurrentFile()));
+
+        HashMap<String, Object> permissions = new HashMap<>();
+        permissions.put("id-token", "write");
+        permissions.put("contents", "read");
+        workflow.setPermissions(permissions);
+        
         HashMap<String, Object> jobs = new HashMap<>();
         Job job = new Job();
         job.setRunsOn(context.getRunsOn());
@@ -270,8 +276,9 @@ public class Parrot {
         LinkedHashMap<String, Object> login = new LinkedHashMap<>();
         login.put("uses", "azure/login@v1");
         HashMap<String, Object> with = new HashMap<>();
-        with.put("creds", "${{ secrets.AZURE_CREDENTIALS }}");
-        with.put("allow-no-subscriptions", "true");
+        with.put("client-id", "${{ secrets.AZURE_CLIENT_ID }}");
+        with.put("tenant-id", "${{ secrets.AZURE_TENANT_ID }}");
+        with.put("subscription-id", "${{ secrets.AZURE_SUBSCRIPTION_ID }}");
         if (context.getRunsOn().contains("windows")) {
             with.put("enable-AzPSSession", "true");
         }
