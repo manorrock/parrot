@@ -32,5 +32,5 @@ import com.manorrock.parrot.ParrotGenerator;
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class WorkflowGenerator implements ParrotGenerator {
+public abstract class WorkflowGenerator implements ParrotGenerator {
 }
