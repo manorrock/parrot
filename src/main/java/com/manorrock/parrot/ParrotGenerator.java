@@ -30,5 +30,5 @@ package com.manorrock.parrot;
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public interface ParrotGenerator {
+public interface ParrotGenerator extends Runnable {
 }

@@ -26,11 +26,84 @@
 package com.manorrock.parrot.shellscript;
 
 import com.manorrock.parrot.ParrotGenerator;
+import java.io.File;
+import static java.lang.System.Logger.Level.INFO;
 
 /**
  * The GitHub shell script generator.
- * 
+ *
  * @author Manfred Riem (mriem@manorrock.com)
  */
 public class ShellScriptGenerator implements ParrotGenerator {
+
+    /**
+     * Stores the logger.
+     */
+    private static final System.Logger LOGGER = System.getLogger(ShellScriptGenerator.class.getName());
+
+    /**
+     * Stores the base directory.
+     */
+    private File baseDirectory = new File(".");
+
+    /**
+     * Stores the workflows output directory.
+     */
+    private File outputDirectory = new File(".");
+
+    /**
+     * Parse the command line arguments.
+     *
+     * @param arguments the arguments.
+     */
+    public void parseArguments(String[] arguments) {
+        if (arguments.length > 0) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i].equals("--baseDirectory")) {
+                    baseDirectory = new File(arguments[i + 1]);
+                }
+                if (arguments[i].equals("--outputDirectory")) {
+                    outputDirectory = new File(arguments[i + 1]);
+                }
+            }
+        }
+        LOGGER.log(INFO, "Base directory: " + baseDirectory);
+        LOGGER.log(INFO, "Output directory: " + outputDirectory);
+    }
+
+    /**
+     * Process the given directory.
+     *
+     * @param directory the directory.
+     */
+    private void processDirectory(File directory) {
+        LOGGER.log(INFO, "Profcessing directory: " + directory);
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().equals("README.md")) {
+                    processFile(file);
+                } else if (file.isDirectory()) {
+                    processDirectory(file);
+                }
+            }
+        }
+    }
+
+    /**
+     * Process the given file.
+     *
+     * @param file the file to process.
+     */
+    private void processFile(File file) {
+        LOGGER.log(INFO, "Profcessing file: " + file);
+    }
+
+    /**
+     * Run the generator.
+     */
+    @Override
+    public void run() {
+        processDirectory(baseDirectory);
+    }
 }
