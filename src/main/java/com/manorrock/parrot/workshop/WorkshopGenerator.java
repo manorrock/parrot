@@ -32,5 +32,5 @@ import com.manorrock.parrot.ParrotGenerator;
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class WorkshopGenerator implements ParrotGenerator {
+public abstract class WorkshopGenerator implements ParrotGenerator {
 }
