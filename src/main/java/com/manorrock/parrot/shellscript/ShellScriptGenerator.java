@@ -25,8 +25,11 @@
  */
 package com.manorrock.parrot.shellscript;
 
+import com.manorrock.parrot.ParrotContext;
 import com.manorrock.parrot.ParrotGenerator;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import static java.lang.System.Logger.Level.INFO;
 
 /**
@@ -51,6 +54,20 @@ public class ShellScriptGenerator implements ParrotGenerator {
      */
     private File outputDirectory = new File(".");
 
+    String generateScriptOutputFilename(File file) {
+        return getRelativeFilename(file).replaceAll("/", "_").replaceAll("\\.", "_") + ".sh";
+    }
+    
+    /**
+     * Get relative filename.
+     *
+     * @param file the file.
+     * @return the relative filename.
+     */
+    private String getRelativeFilename(File file) {
+        return file.getAbsolutePath().substring(baseDirectory.getAbsolutePath().length() + 1);
+    }
+    
     /**
      * Parse the command line arguments.
      *
@@ -96,7 +113,21 @@ public class ShellScriptGenerator implements ParrotGenerator {
      * @param file the file to process.
      */
     private void processFile(File file) {
-        LOGGER.log(INFO, "Profcessing file: " + file);
+        LOGGER.log(INFO, "Processing file: " + file);
+        ParrotContext context = new ParrotContext();
+        context.setWorkflowOutputFilename(generateScriptOutputFilename(file));
+        
+        try {
+            File outputFile = new File(outputDirectory, context.getShellScriptOutputFilename());
+            FileWriter workflowOutputWriter = new FileWriter(outputFile);
+            workflowOutputWriter.write("#!/bin/bash");
+            /*
+             * Generate the shell script.
+             */
+            workflowOutputWriter.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     /**
