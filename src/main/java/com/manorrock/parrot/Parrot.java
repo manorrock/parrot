@@ -41,6 +41,7 @@ import com.manorrock.parrot.model.Push;
 import com.manorrock.parrot.model.ShellScript;
 import com.manorrock.parrot.model.Workflow;
 import com.manorrock.parrot.model.WorkflowDispatch;
+import com.manorrock.parrot.shellscript.ShellScriptGenerator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -80,6 +81,11 @@ public class Parrot {
      * Stores the default runs-on.
      */
     private String runsOn;
+
+    /**
+     * Stores the mode.
+     */
+    private String mode = "legacy";
 
     /**
      * Stores the workflows output directory.
@@ -122,6 +128,9 @@ public class Parrot {
                 if (arguments[i].equals("--runsOn")) {
                     runsOn = arguments[i + 1];
                 }
+                if (arguments[i].equals("--mode")) {
+                    mode = arguments[i + 1];
+                }
             }
         }
         LOGGER.log(INFO, "--- Arguments: ");
@@ -135,7 +144,23 @@ public class Parrot {
      * Run the generator.
      */
     private void run() {
-        processDirectory(baseDirectory);
+        switch (mode) {
+            case "legacy" ->
+                processDirectory(baseDirectory);
+
+            case "bash" -> {
+                ShellScriptGenerator generator = new ShellScriptGenerator();
+                generator.run();
+            }
+            
+            case "workflow" -> {
+                processDirectory(baseDirectory);
+            }
+            
+            case "workshop" -> {
+                System.err.println("Not implemented yet");
+            }
+        }
     }
 
     /**
@@ -266,7 +291,7 @@ public class Parrot {
         permissions.put("id-token", "write");
         permissions.put("contents", "read");
         workflow.setPermissions(permissions);
-        
+
         HashMap<String, Object> jobs = new HashMap<>();
         Job job = new Job();
         job.setRunsOn(context.getRunsOn());
