@@ -29,8 +29,15 @@ import com.manorrock.parrot.ParrotGenerator;
 
 /**
  * The GitHub workflow generator.
- * 
+ *
  * @author Manfred Riem (mriem@manorrock.com)
  */
 public abstract class WorkflowGenerator implements ParrotGenerator {
+
+    /**
+     * Run the generator.
+     */
+    @Override
+    public void run() {
+    }
 }
