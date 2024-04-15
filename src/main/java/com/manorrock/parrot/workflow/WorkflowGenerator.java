@@ -26,18 +26,43 @@
 package com.manorrock.parrot.workflow;
 
 import com.manorrock.parrot.ParrotGenerator;
+import java.io.File;
 
 /**
  * The GitHub workflow generator.
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public abstract class WorkflowGenerator implements ParrotGenerator {
+public class WorkflowGenerator implements ParrotGenerator {
 
+    /**
+     * Stores the base directory.
+     */
+    private File baseDirectory;
+    
+    /**
+     * Process the given directory.
+     *
+     * @param directory the directory.
+     */
+    private void processDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().equals("README.md")) {
+                    // processFile(file);
+                } else if (file.isDirectory()) {
+                    processDirectory(file);
+                }
+            }
+        }
+    }
+    
     /**
      * Run the generator.
      */
     @Override
     public void run() {
+        processDirectory(baseDirectory);
     }
 }
