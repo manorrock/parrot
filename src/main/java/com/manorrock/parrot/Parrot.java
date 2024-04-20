@@ -195,7 +195,7 @@ public class Parrot {
         }
         context.setCurrentFile(file);
         context.getSnippets().addAll(loadFile(file));
-        context.setWorkflowOutputFilename(generateWorkflowOutputFilename(file));
+        context.setOutputFilename(generateWorkflowOutputFilename(file));
         context.setShellScriptOutputFilename(generateShellScriptOutputFilename(file));
         // Generates the workflow
         Workflow workflow = generateWorkflow(context);
@@ -219,7 +219,7 @@ public class Parrot {
         }
         try {
             // Writes the workflow file
-            File workflowOutputFile = new File(outputDirectory, context.getWorkflowOutputFilename());
+            File workflowOutputFile = new File(outputDirectory, context.getOutputFilename());
             FileWriter workflowOutputWriter = new FileWriter(workflowOutputFile);
             workflowOutputWriter.write(stringWriter.toString());
             workflowOutputWriter.flush();
@@ -566,7 +566,7 @@ public class Parrot {
      */
     private void processOutputFilename(ParrotContext context, String outputFilename) {
         if (context.getSnippetStack().isEmpty()) {
-            context.setWorkflowOutputFilename(outputFilename);
+            context.setOutputFilename(outputFilename);
         }
     }
 

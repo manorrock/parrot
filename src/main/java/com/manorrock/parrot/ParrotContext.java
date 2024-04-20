@@ -55,9 +55,9 @@ public class ParrotContext {
     private final Stack<File> fileStack;
 
     /**
-     * Stores the workflow output filename.
+     * Stores the output filename.
      */
-    private String workflowOutputFilename;
+    private String outputFilename;
 
     /**
      * Stores the shell script output filename.
@@ -166,8 +166,8 @@ public class ParrotContext {
      * 
      * @return the workflow output filename.
      */
-    public String getWorkflowOutputFilename() {
-        return workflowOutputFilename;
+    public String getOutputFilename() {
+        return outputFilename;
     }
 
     /**
@@ -227,10 +227,10 @@ public class ParrotContext {
     /**
      * Set the workflow output filename.
      *
-     * @param workflowOutputFilename the workflow output filename.
+     * @param outputFilename the workflow output filename.
      */
-    public void setWorkflowOutputFilename(String workflowOutputFilename) {
-        this.workflowOutputFilename = workflowOutputFilename;
+    public void setOutputFilename(String outputFilename) {
+        this.outputFilename = outputFilename;
     }
 
     /**

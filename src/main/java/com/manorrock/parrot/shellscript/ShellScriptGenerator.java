@@ -115,7 +115,7 @@ public class ShellScriptGenerator implements ParrotGenerator {
     private void processFile(File file) {
         LOGGER.log(INFO, "Processing file: " + file);
         ParrotContext context = new ParrotContext();
-        context.setWorkflowOutputFilename(generateScriptOutputFilename(file));
+        context.setOutputFilename(generateScriptOutputFilename(file));
         
         try {
             File outputFile = new File(outputDirectory, context.getShellScriptOutputFilename());
