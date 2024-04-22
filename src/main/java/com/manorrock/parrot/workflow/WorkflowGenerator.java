@@ -41,6 +41,14 @@ public class WorkflowGenerator implements ParrotGenerator {
     private File baseDirectory;
     
     /**
+     * Process the given file.
+     * 
+     * @param file the file.
+     */
+    private void processFile(File file) {
+    }
+    
+    /**
      * Process the given directory.
      *
      * @param directory the directory.
@@ -50,7 +58,7 @@ public class WorkflowGenerator implements ParrotGenerator {
         if (files != null) {
             for (File file : files) {
                 if (file.getName().equals("README.md")) {
-                    // processFile(file);
+                    processFile(file);
                 } else if (file.isDirectory()) {
                     processDirectory(file);
                 }
