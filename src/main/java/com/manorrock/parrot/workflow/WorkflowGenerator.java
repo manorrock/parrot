@@ -25,8 +25,13 @@
  */
 package com.manorrock.parrot.workflow;
 
+import com.manorrock.parakeet.YAMLWriter;
 import com.manorrock.parrot.ParrotGenerator;
+import com.manorrock.parrot.model.Workflow;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * The GitHub workflow generator.
@@ -39,15 +44,52 @@ public class WorkflowGenerator implements ParrotGenerator {
      * Stores the base directory.
      */
     private File baseDirectory;
+
+    /**
+     * Stores the output directory.
+     */
+    private File outputDirectory;
     
     /**
-     * Process the given file.
+     * Generate the output filename.
      * 
+     * @param file the file.
+     * @return the filename.
+     */
+    private String generateOutputFilename(File file) {
+        return generateRelativeFilename(file)
+                .replaceAll("/", "_")
+                .replaceAll("\\.", "_") + ".yml";
+    }
+    
+    /**
+     * Generate the relative filename.
+     *
+     * @param file the file.
+     * @return the relative filename.
+     */
+    private String generateRelativeFilename(File file) {
+        return file.getAbsolutePath()
+                .substring(baseDirectory.getAbsolutePath().length() + 1);
+    }
+
+    /**
+     * Process the given file.
+     *
      * @param file the file.
      */
     private void processFile(File file) {
+        try {
+            Workflow workflow = new Workflow();
+            File outputFile = new File(outputDirectory, generateOutputFilename(file));
+            YAMLWriter writer = new YAMLWriter(new FileWriter(outputFile));
+            writer.writeObject(workflow);
+            writer.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
-    
+
     /**
      * Process the given directory.
      *
@@ -65,7 +107,7 @@ public class WorkflowGenerator implements ParrotGenerator {
             }
         }
     }
-    
+
     /**
      * Run the generator.
      */
