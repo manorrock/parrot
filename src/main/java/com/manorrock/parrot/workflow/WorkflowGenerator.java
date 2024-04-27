@@ -26,12 +26,12 @@
 package com.manorrock.parrot.workflow;
 
 import com.manorrock.parakeet.YAMLWriter;
+import com.manorrock.parrot.ParrotContext;
 import com.manorrock.parrot.ParrotGenerator;
 import com.manorrock.parrot.model.Workflow;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 
 /**
  * The GitHub workflow generator.
@@ -72,6 +72,16 @@ public class WorkflowGenerator implements ParrotGenerator {
         return file.getAbsolutePath()
                 .substring(baseDirectory.getAbsolutePath().length() + 1);
     }
+    
+    /**
+     * Generate a workflow.
+     * 
+     * @param context the context.
+     * @return the workflow.
+     */
+    private Workflow generateWorkflow(ParrotContext context) {
+        return new Workflow();
+    }
 
     /**
      * Process the given file.
@@ -80,7 +90,7 @@ public class WorkflowGenerator implements ParrotGenerator {
      */
     private void processFile(File file) {
         try {
-            Workflow workflow = new Workflow();
+            Workflow workflow = generateWorkflow(new ParrotContext());
             File outputFile = new File(outputDirectory, generateOutputFilename(file));
             YAMLWriter writer = new YAMLWriter(new FileWriter(outputFile));
             writer.writeObject(workflow);
